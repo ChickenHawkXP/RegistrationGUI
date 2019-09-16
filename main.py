@@ -6,11 +6,12 @@
 #
 # WARNING! All changes made in this file will be lost!
 
-
+import PyQt5
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMessageBox
 import json
 import mysql.connector
+import mysql.connector.errors as ErrorOut
 table = "information"
 with open('config.json', 'r') as files:
     data = json.load(files)
@@ -93,7 +94,7 @@ class Ui_MainWindow(object):
         self.label_9.setFont(font)
         self.label_9.setObjectName("label_9")
         self.label_10 = QtWidgets.QLabel(self.centralwidget)
-        self.label_10.setGeometry(QtCore.QRect(0, 320, 151, 61))
+        self.label_10.setGeometry(QtCore.QRect(410,100, 151, 61))
         font = QtGui.QFont()
         font.setFamily("Comic Sans MS")
         font.setPointSize(18)
@@ -117,23 +118,17 @@ class Ui_MainWindow(object):
         self.sex = QtWidgets.QLineEdit(self.centralwidget)
         self.sex.setGeometry(QtCore.QRect(230, 270, 131, 20))
         self.sex.setObjectName("sex")
-        self.height = QtWidgets.QLineEdit(self.centralwidget)
-        self.height.setGeometry(QtCore.QRect(410, 270, 131, 20))
-        self.height.setObjectName("height")
-        self.pets = QtWidgets.QLineEdit(self.centralwidget)
-        self.pets.setGeometry(QtCore.QRect(410, 170, 131, 20))
-        self.pets.setObjectName("pets")
         self.major = QtWidgets.QLineEdit(self.centralwidget)
         self.major.setGeometry(QtCore.QRect(410, 70, 131, 20))
         self.major.setObjectName("major")
         self.email = QtWidgets.QLineEdit(self.centralwidget)
-        self.email.setGeometry(QtCore.QRect(0, 380, 131, 20))
+        self.email.setGeometry(QtCore.QRect(410, 170, 131, 20))
         self.email.setObjectName("email")
         self.label_11 = QtWidgets.QLabel(self.centralwidget)
-        self.label_11.setGeometry(QtCore.QRect(300, 310, 161, 16))
+        self.label_11.setGeometry(QtCore.QRect(220, 320, 161, 16))
         self.label_11.setObjectName("label_11")
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton.setGeometry(QtCore.QRect(260, 340, 241, 51))
+        self.pushButton.setGeometry(QtCore.QRect(160, 350, 241, 51))
         font = QtGui.QFont()
         font.setFamily("Comic Sans MS")
         font.setPointSize(22)
@@ -160,23 +155,22 @@ class Ui_MainWindow(object):
             phone = self.phone.text()
             sex = self.sex.text()
             major = self.major.text()
-            try:
-                pets = int(self.pets.text())
-                height = int(self.height.text())
-            except:
-                error = QMessageBox()
-                error.setText("Enter integers in the pet/height field!")
-                error.exec()
-                return
-            if(fname == "" or lname == "" or birthday == "" or email == "" or address == "" or phone == "" or sex == "" or major == "" or pets == "" or height == ""):
+
+            if(fname == "" or lname == "" or birthday == "" or email == "" or address == "" or phone == "" or sex == "" or major == ""):
                 error = QMessageBox()
                 error.setText("Please fill in all fields!")
                 error.exec()
                 return
             #print("First Name: %s\nLast Name: %s\nBirthday: %s\nEmail: %s\nAddress: %s\nPhone: %s\nSex: %s\nMajor: %s\nPets: %d\nHeight: %d" %(fname,lname,birthday,email,address,phone,sex,major,pets,height))
-            cursor.execute("""INSERT INTO %s
-                              VALUES 
-                              ('%s','%s','%s','%s','%s','%s','%s','%s',%d,%d);""" %(table,fname,lname,birthday,email,address,phone,sex,major,pets,height))
+            try:
+                cursor.execute("""INSERT INTO %s
+                                    VALUES 
+                                    ('%s','%s','%s','%s','%s','%s','%s','%s');""" %(table,fname,lname,birthday,email,address,phone,sex,major))
+            except:
+                error = QMessageBox()
+                error.setText("Invalid Character found, please rer-enter data")
+                error.exec()
+                return
             database.commit()
             self.fname.clear()
             self.lname.clear()
@@ -187,11 +181,8 @@ class Ui_MainWindow(object):
             self.address.clear()
             self.sex.clear()
             self.major.clear()
-            self.pets.clear()
-            self.height.clear()
             
             print("User has been added!")
-
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -206,8 +197,6 @@ class Ui_MainWindow(object):
         self.label_5.setText(_translate("MainWindow", "Phone Number"))
         self.label_6.setText(_translate("MainWindow", "Sex"))
         self.label_7.setText(_translate("MainWindow", "Major"))
-        self.label_8.setText(_translate("MainWindow", "# of Pets"))
-        self.label_9.setText(_translate("MainWindow", "Height (in.)"))
         self.label_10.setText(_translate("MainWindow", "Email"))
         self.label_11.setText(_translate("MainWindow", "*ALL FIELDS ARE REQUIRED!*"))
         self.pushButton.setText(_translate("MainWindow", "SUBMIT"))
