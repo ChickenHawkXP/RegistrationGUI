@@ -168,7 +168,7 @@ class Ui_MainWindow(object):
                                     ('%s','%s','%s','%s','%s','%s','%s','%s');""" %(table,fname,lname,birthday,email,address,phone,sex,major))
             except:
                 error = QMessageBox()
-                error.setText("Invalid Character found, please rer-enter data")
+                error.setText("Invalid Character found, please re-enter data")
                 error.exec()
                 return
             database.commit()
